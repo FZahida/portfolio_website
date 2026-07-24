@@ -1,21 +1,19 @@
 // Import mongoose for MongoDB connection
 const mongoose = require('mongoose');
 
-/**
- * Connect to MongoDB database
- * This function handles the connection to MongoDB
- * Uses environment variable for connection string
- */
 const connectDB = async () => {
+  const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/portfolio';
+
   try {
     // Attempt to connect to MongoDB
-    // process.env.MONGODB_URI comes from .env file
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(mongoUri, {
+      serverSelectionTimeoutMS: 5000
+    });
     console.log('✅ MongoDB Connected Successfully');
   } catch (error) {
-    // If connection fails, log error and exit
+    // If connection fails, log error and rethrow so the server can fail fast
     console.error('❌ MongoDB Connection Error:', error.message);
-    process.exit(1); // Exit with failure code
+    throw error;
   }
 };
 
